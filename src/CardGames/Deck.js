@@ -18,16 +18,53 @@ function shuffle(array) {
     return array;
 }
 
-function dealCard(array, player){
-    if(firstDeal){
-        if(array.length !== 0){
-            player.cards.push(array[0]);
-            array.shift();
+function firstDeal(){
+    console.log("first deal");
+    for(var i = 0; i < 2; i++){
+        for(var j = 0; j < players.length; j++){
+            if(cards.length !== 0){
+                players[j].insertCard(card);
+                cards.shift();
+                console.log("card inserted")
+            }else{
+                console.log("No more cards");
+            }
+        }
+    }
+}
+
+function dealCard(hand, player, dealMode){
+    if(dealMode == "Hit"){
+        console.log("hit")
+        if(cards.length !== 0){
+            if(player.hands.length != 0){
+                player.insertCard(hand, card);
+                cards.shift();
+            }
+            console.log("card inserted")
         }else{
             console.log("No more cards");
         }
-    }else{
-        //TODO: need to know rules after first deal
     }
-   
+    else if(dealMode == "Double"){
+        console.log("double");
+        if(cards.length !== 0){
+            if(player.hands.length != 0){
+                player.insertCard(hand, card);
+                cards.shift();
+            }
+            console.log("card inserted");
+            if(cards.length !== 0){
+                if(player.hands.length != 0){
+                    player.insertCard(hand, card);
+                    cards.shift();
+                }
+                console.log("card inserted");
+            }else{
+                console.log("No more cards");
+            }            
+        }else{
+            console.log("No more cards");
+        }
+    }    
 }

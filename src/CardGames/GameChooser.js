@@ -1,9 +1,10 @@
 module.exports = {
-chooseGame:function(game, botRef){
+chooseGame:function(gameChosen, botRef){
+    var temp = new gameChosen[1](botRef)
     botRef.bot.sendMessage({
         to: botRef.channelID,
-        message: 'blackjack started!'
+        message: gameChosen[0] + ' started!'
     });
-    return 'blackjack';
+    return temp;
     }
 }

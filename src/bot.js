@@ -1,16 +1,27 @@
 var Discord = require('discord.io');
 var auth = require('./auth.json');
-var CardGames = require('./CardGames')
 var BotData = require('./BotData.js')
+//Card game directory
+var cardDir = "./CardGames"
+var CardGames = require(cardDir)
+
+//Card game objects
+var Blackjack = require(cardDir + '/Blackjack.js')
+var GoFish = require(cardDir + '/GoFish.js')
+
+//Game info
+var gameCards = [['blackjack', Blackjack], ['gofish', GoFish]]
+var gameTypes = [[gameCards, CardGames]]
+
+//Active channels
+var channels = []
+
 // Initialize Discord Bot
 var bot = new Discord.Client({
    token: auth.token,
    autorun: true
 });
 
-var channels = []
-var gameCards = ['blackjack']
-var gameTypes = [[gameCards, CardGames]]
 
 bot.on('ready', function (evt) {
 
@@ -24,6 +35,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
 
         var botRef = new BotData(bot, user, userID, channelID, message, evt);
         args = args.splice(1);
+
         var flag = -1;
         for (var x = 0; x<channels.length; x++){
             if (channels[x][0] == channelID){
@@ -41,9 +53,9 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 var gt = gameTypes[x];
                 for (var y = 0; y < gt[0].length; y++){
                     var g = gt[0][y];
-                    if (cmd == g){
-                        //Command is a games, initialise this game
-                        gameChosen = gt[1].chooseGame(cmd, botRef);
+                    if (cmd == g[0]){
+                        //Command is a game, initialise this game
+                        gameChosen = gt[1].chooseGame(g, botRef);
                         channels.push([channelID, gameChosen]);
                         breaker = true;
                         break;
@@ -61,12 +73,23 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             }
         }
         else{
-            //channels[x][1].send();
-
-            bot.sendMessage({
-                to: channelID,
-                message: ("Game " + channels[flag][1] + " already started")
-            });
+            if (cmd == 'stop'){
+                bot.sendMessage({
+                    to: channelID,
+                    message: ('Stopping game...')
+                });
+                channels.splice(flag,1);
+            }
+            else{
+                //var success = channels[x][1].send();
+                var success = false;
+                if (!success){
+                    bot.sendMessage({
+                        to: channelID,
+                        message: ("Game already started")
+                    });
+                }
+            }
         }
     }
 });

@@ -81,7 +81,64 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 channels.splice(flag,1);
             }
             else{
+                var currGame = channels[flag][1];
                 //var success = channels[x][1].send();
+                switch (cmd){
+                    case 'join':
+                        var newPlayer = currGame.createPlayer(botRef);
+                        if (this.table.length  < currGame.maxPlayers){
+                            currGame.table.push[newPlayer];
+                            bot.sendMessage({
+                                to: channelID,
+                                message: "Welcome to Blackjack! Room" + botRef.channelID,
+                            });
+                        }else{
+                            bot.sendMessage({
+                                to: channelID,
+                                message: "Sorry. Table Currently Full.",
+                            });
+                        }
+                    break;
+                    case 'leave':
+                        for( var i = 0; i < currGame.table.length; i++){
+                            if (currGame.table[i].userID == userID) {
+                                currGame.table.splice(i, 1);
+                                break;
+                            }
+                        }
+
+                        bot.sendMessage({
+                            to: channelID,
+                            message: "Goodbye.",
+                        });
+                    break;
+                    case 'ready':
+                        for( var i = 0; i < currGame.table.length; i++){
+                            if (currGame.table[i].userID == userID) {
+                                currGame.table.splice(i, 1);
+                                var pos = currGame.indexOf(userID);
+                                if (pos == -1){
+                                    currGame.readyPlayers.push(userId);
+                                }
+                                else{
+                                    currGame.readyPlayers.splice(pos,1);
+                                }
+                                bot.sendMessage({
+                                    to: channelID,
+                                    message: (currGame.readyPlayers.toString() + " are ready. " + (currGame.table.length-currGame.readyPlayers.length).toString() + " players must be ready to start.")
+                                });
+                                break;
+                            }
+                            if (currGame.table.length==currGame.readyPlayers.length){
+                                bot.sendMessage({
+                                    to: channelID,
+                                    message: ("Starting game with " + currGame.readyPlayers.length.toString() + " players.")
+                                });
+                                currGame.start();
+                            }
+                        }
+                    break;
+                }
                 var success = false;
                 if (!success){
                     bot.sendMessage({

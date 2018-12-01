@@ -1,4 +1,4 @@
-exports = class Player{
+module.exports = class Player{
     constructor(user, userID, cards){
         this.user = user;
         this.userID = userID;

@@ -1,4 +1,4 @@
-class Blackjack{
+module.export = class Blackjack{
     constructor(botRef){
         this.currentPlayerIndex = 0;
         this.gameStarted = false;
@@ -29,46 +29,6 @@ class Blackjack{
             this.play(command, botRef);
         }
 
-    }
-
-    joinLobby(botRef){
-        botRef.bot.sendMessage({
-            to: botRef.channelID,
-            message: "Welcome to Blackjack! Room" + botRef.channelID,
-        });
-    }
-
-    addPlayer(botRef){
-        var newPlayer = new this.player(botRef.user, botRef.userID);
-        if (this.table.length  < 8){
-           this.table.push[newPlayer];
-
-            botRef.bot.sendMessage({
-                to: botRef.channelID,
-                message: "Welcome to Blackjack! Room" + botRef.channelID,
-            });
-        }else{
-            botRef.bot.sendMessage({
-                to: botRef.channelID,
-                message: "Sorry. Table Currently Full.",
-            });
-        }
-    }
-
-    removePlayer(botRef){
-        for( var i = 0; i < this.table.length-1; i++){ 
-            if ( this.table[i] === botRef.userID) {
-              this.table.splice(i, 1); 
-              break;
-            }
-        }
-        
-        botRef.bot.sendMessage({
-            to: botRef.channelID,
-            message: "Goodbye.",
-        });
-
-        return this.table.length;
     }
     
     dealStartingHand(){

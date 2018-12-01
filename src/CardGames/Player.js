@@ -4,6 +4,7 @@ exports = class Player{
         this.userID = userID;
         this.cards = cards;
         this.hands = [];
+        this.ready = false;
     }
 
     insertCard(card){
@@ -17,5 +18,9 @@ exports = class Player{
     split(){
         this.hands.push(this.cards[0]);
         this.hands.push(this.cards[1]);
+    }
+    
+    clearHand(){
+        this.hands = [];
     }
 }

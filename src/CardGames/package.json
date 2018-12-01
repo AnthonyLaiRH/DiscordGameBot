@@ -1,0 +1,11 @@
+{
+  "name": "cardgames",
+  "version": "1.0.0",
+  "description": "Card game package with helper classes",
+  "main": "GameChooser.js",
+  "scripts": {
+    "test": "chooseGame(\"blackjack\")"
+  },
+  "author": "Anthony,Bryan,Peter",
+  "license": "ISC"
+}

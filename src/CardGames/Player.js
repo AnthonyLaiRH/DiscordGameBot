@@ -5,6 +5,7 @@ module.exports = class Player{
         this.cards = cards;
         this.hands = [];
         this.ready = false;
+        this.bet = 2;
     }
 
     insertCard(card){

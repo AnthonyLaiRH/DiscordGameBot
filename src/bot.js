@@ -58,6 +58,8 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         gameChosen = gt[1].chooseGame(g, botRef);
                         channels.push([channelID, gameChosen]);
                         breaker = true;
+                        var newPlayer = gameChosen.createPlayer(botRef);
+                        gameChosen.table.push[newPlayer];
                         break;
                     }
                 }
@@ -85,47 +87,70 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                 if (!currGame.gameStarted){
                     switch (cmd){
                         case 'join':
-                            var newPlayer = currGame.createPlayer(botRef);
-                            if (this.table.length  < currGame.maxPlayers){
-                                currGame.table.push[newPlayer];
-                                bot.sendMessage({
-                                    to: channelID,
-                                    message: "Welcome to Blackjack! Room" + botRef.channelID,
-                                });
-                            }else{
-                                bot.sendMessage({
-                                    to: channelID,
-                                    message: "Sorry. Table Currently Full.",
-                                });
+                            var inHere = false;
+                            for(var i = 0; i < currGame.table.length; i++){
+                                if (currGame.table[i].userID == userID) {
+                                    inHere = true;
+                                    bot.sendMessage({
+                                        to: channelID,
+                                        message: "Already in the room",
+                                    });
+                                    break;
+                                }
+                            }
+                            if (!inHere){
+                                if (currGame.table.length  < currGame.maxPlayers){
+                                    var newPlayer = currGame.createPlayer(botRef);
+                                    currGame.table.push[newPlayer];
+                                    bot.sendMessage({
+                                        to: channelID,
+                                        message: "Welcome to Blackjack! Room" + channelID,
+                                    });
+                                }else{
+                                    bot.sendMessage({
+                                        to: channelID,
+                                        message: "Sorry. Table Currently Full.",
+                                    });
+                                }
                             }
                         break;
                         case 'leave':
                             for( var i = 0; i < currGame.table.length; i++){
                                 if (currGame.table[i].userID == userID) {
+                                    if (currGame.table.length == 1){
+                                        bot.sendMessage({
+                                            to: channelID,
+                                            message: ('Stopping game...')
+                                        });
+                                        channels.splice(flag,1);
+                                    }
                                     currGame.table.splice(i, 1);
+                                    var pos = currGame.readyPlayers.indexOf(userID);
+                                    if (pos != -1){
+                                        currGame.readyPlayers.splice(pos,1);
+                                    }
+                                    bot.sendMessage({
+                                        to: channelID,
+                                        message: "Goodbye.",
+                                    });
                                     break;
                                 }
                             }
-
-                            bot.sendMessage({
-                                to: channelID,
-                                message: "Goodbye.",
-                            });
                         break;
                         case 'ready':
                             for( var i = 0; i < currGame.table.length; i++){
                                 if (currGame.table[i].userID == userID) {
                                     currGame.table.splice(i, 1);
-                                    var pos = currGame.indexOf(userID);
+                                    var pos = currGame.readyPlayers.indexOf(userID);
                                     if (pos == -1){
-                                        currGame.readyPlayers.push(userId);
+                                        currGame.readyPlayers.push(userID);
                                     }
                                     else{
                                         currGame.readyPlayers.splice(pos,1);
                                     }
                                     bot.sendMessage({
                                         to: channelID,
-                                        message: (currGame.readyPlayers.toString() + " are ready. " + (currGame.table.length-currGame.readyPlayers.length).toString() + " players must be ready to start.")
+                                        message:((currGame.table.length-currGame.readyPlayers.length).toString() + " players must be ready to start.")
                                     });
                                     break;
                                 }

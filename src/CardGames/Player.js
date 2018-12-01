@@ -1,5 +1,5 @@
 module.exports = class Player{
-    constructor(user, userID, cards){
+    constructor(user, userID, cards, role){
         this.user = user;
         this.userID = userID;
         this.cards = cards;

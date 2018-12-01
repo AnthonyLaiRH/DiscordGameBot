@@ -31,7 +31,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
     // It will listen for messages that will start with `!`
     if (message.substring(0, 1) == '!') {
         var args = message.substring(1).split(' ');
-        var cmd = args[0];
+        var cmd = args[0].toLowerCase();
 
         var botRef = new BotData(bot, user, userID, channelID, message, evt);
         args = args.splice(1);
@@ -82,7 +82,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
             }
             else{
                 var currGame = channels[flag][1];
-                if (!currGame.gameStarted)
+                if (!currGame.gameStarted){
                     switch (cmd){
                         case 'join':
                             var newPlayer = currGame.createPlayer(botRef);

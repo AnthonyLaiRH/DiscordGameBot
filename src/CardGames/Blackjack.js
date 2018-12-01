@@ -6,36 +6,21 @@ module.export = class Blackjack{
         this.readyPlayers = [];
         this.table = [new this.player(botRef.user, botRef.userID)];
     }
-
+    start(botRef){
+        this.dealStartingHand();
+        this.gameStarted = true;
+        Deck.firstDeal();
+        playerTurns(botRef);
+    }
     receive(botRef){
         var command = botRef.message.toLowerCase()
-        switch (command){
-            case "sit":
-                this.addPlayer(botRef);
-                break;
-            case "leave":
-                this.removePlayer(botRef);
-                break;
-        }
-        if (!this.gameStarted){
-            if (command == "deal" && this.readyPlayers.includes(botRef.userID)){
-                this.readyPlayers.push[botRef.userID]
-                if (this.readyPlayers.length == this.table.length){
-                    this.gameStarted = true;
-                    this.dealStartingHand();
-                }
-            }
-        }else if(botRef.userID == this.table[this.currentPlayerIndex].userID){
+
+        if(botRef.userID == this.table[this.currentPlayerIndex].userID){
             if (command == "")
 
             this.play(command, botRef);
         }
 
-    }
-    
-    dealStartingHand(){
-        Deck.firstDeal();
-        playerTurns(botDef);
     }
 
     play(action,botRef){
@@ -61,12 +46,10 @@ module.export = class Blackjack{
             });
         }
 
-        if (this.currentPlayerIndex >= this.table.length){
-            this.dealerTurn();
-        }
     }
 
     dealerTurn(){
+
     }
 
 }

@@ -53,6 +53,10 @@ exports = class Deck{
                     player.insertCard(hand, cards.shift());
                     console.log("card inserted");
                 }
+                else{
+                    player.insertCard(cards.shift());
+                    console.log("card inserted");
+                }
                 
             }else{
                 console.log("No more cards");
@@ -64,11 +68,18 @@ exports = class Deck{
                 if(player.hands.length != 0){
                     player.insertCard(hand, cards.shift());
                     console.log("card inserted");
+                }else{
+                    player.insertCard(cards.shift());
+                    console.log("card inserted");
                 }
                 
                 if(cards.length !== 0){
                     if(player.hands.length != 0){
                         player.insertCard(hand, cards.shift());
+                        console.log("card inserted");
+                    }
+                    else{
+                        player.insertCard(cards.shift());
                         console.log("card inserted");
                     }
                     

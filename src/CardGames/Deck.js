@@ -37,12 +37,19 @@ exports = class Deck{
         for(var i = 0; i < 2; i++){
             for(var j = 0; j < players.length; j++){
                 if(cards.length != 0){
-                    players[j].insertCard(cards.shift());
-                    if(player[j].cards[i].name == "A"){
-                        if(i == 1 && player[j].cards[i-1].value + 11 > 21){
-                            player[j].cards[i].value = 1;
+                    var card = cards.shift();
+                    if(i == 1){
+                        if(card.name == "A"){
+                            if(player[j].cards[i-1].value + 11 > 21){
+                                card.value = 1;
+                            }
+                        }
+
+                        if(player[j].role.toUpperCase() == "PLAYER"){
+                            card.flip();
                         }
                     }
+                    players[j].insertCard(card);
                     console.log("card inserted");
                 }else{
                     console.log("No more cards");
@@ -62,6 +69,7 @@ exports = class Deck{
                             card.value = 1;
                         }
                     }
+                    card.flip();
                     player.insertCard(hand, card);
                     console.log("card inserted");
                 }
@@ -71,6 +79,7 @@ exports = class Deck{
                             card.value = 1;
                         }
                     }
+                    card.flip();
                     player.insertCard(hand, card);
                     console.log("card inserted");
                 }
@@ -90,7 +99,8 @@ exports = class Deck{
                             card.value = 1;
                         }
                     }
-                    player.insertCard(hand, card1);    
+                    card.flip();
+                    player.insertCard(hand, card);    
                     console.log("card inserted");
                 }else{
                     if(card1.name == "A"){
@@ -98,7 +108,8 @@ exports = class Deck{
                             card.value = 1;
                         }
                     }
-                    player.insertCard(card1)
+                    card.flip();
+                    player.insertCard(card)
                     console.log("card inserted");
                 }
                 player.bet *= 2;

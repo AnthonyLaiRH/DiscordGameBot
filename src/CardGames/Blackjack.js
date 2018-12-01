@@ -18,14 +18,16 @@ class Blackjack{
                 break;
         }
         if (!this.gameStarted){
-            if (command === "deal" && this.readyPlayers.includes(botRef.userID)){
+            if (command == "deal" && this.readyPlayers.includes(botRef.userID)){
                 this.readyPlayers.push[botRef.userID]
-                if (this.readyPlayers.length === this.table.length){
+                if (this.readyPlayers.length == this.table.length){
                     this.gameStarted = true;
                     this.dealStartingHand();
                 }
             }
-        }else if(botRef.userID === this.table[this.currentPlayerIndex].userID){
+        }else if(botRef.userID == this.table[this.currentPlayerIndex].userID){
+            if (command == "")
+
             this.play(command, botRef);
         }
 
@@ -56,8 +58,8 @@ class Blackjack{
     }
 
     removePlayer(botRef){
-        for( var i = 0; i < this.table.length-1; i++){ 
-            if ( this.table[i] === botRef.userID) {
+        for( var i = 0; i < this.table.length; i++){ 
+            if ( this.table[i] == botRef.userID) {
               this.table.splice(i, 1); 
               break;
             }
@@ -81,13 +83,30 @@ class Blackjack{
         var player = this.table[this.currentPlayerIndex];
         Deck.dealCard(hand,player,action);
         if (player.handValue() > 21){
-            
+            botRef.bot.sendMessage({
+                to: botRef.channelID,
+                message: "Bust!",
+            });
+            this.currentPlayerIndex++;
+        }else if (player.handValue() == 21){
+            botRef.bot.sendMessage({
+                to: botRef.channelID,
+                message: "21!",
+            });
+            this.currentPlayerIndex++;
+        }else{
+            botRef.bot.sendMessage({
+                to: botRef.channelID,
+                message: player.handValue(),
+            });
         }
 
+        if (this.currentPlayerIndex >= this.table.length){
+            this.dealerTurn();
+        }
     }
 
     dealerTurn(){
-        
     }
 
 }

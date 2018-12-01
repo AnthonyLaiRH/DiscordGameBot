@@ -83,11 +83,11 @@ exports = class Deck{
             console.log("double");
             //first card
             if(cards.length != 0){
-                var card1 = cards.shift();
+                var card = cards.shift();
                 if(player.hands.length != 0){
-                    if(card1.name == "A");
+                    if(card1.name == "A"){
                         if(hand[hand.length-1].value + 11 > 21){
-                            card1.value = 1;
+                            card.value = 1;
                         }
                     }
                     player.insertCard(hand, card1);    
@@ -95,42 +95,17 @@ exports = class Deck{
                 }else{
                     if(card1.name == "A"){
                         if(player.cards[player.cards.length-1].value + 11 > 21){
-                            card1.value = 1;
+                            card.value = 1;
                         }
                     }
                     player.insertCard(card1)
                     console.log("card inserted");
                 }
-                
-                //second card
-                if(cards.length !== 0){
-                    var card2 = cards.shift();
-                    if(player.hands.length != 0){
-                        if(card2 == "A"){
-                            if(hand[hand.length-1].value + 11 > 21){
-                                card2.value = 1;
-                            }
-                        }
-                        player.insertCard(hand, card2);
-                        console.log("card inserted");
-                    }
-                    else{
-                        if(card2 == "A"){
-                            if(player.cards[player.cards.length-1].value + 11 > 21){
-                                card2.value = 1;
-                            }
-                        }
-                        player.insertCard(hand, card2);
-                        console.log("card inserted");
-                    }
-                    
-                }else{
-                    console.log("No more cards");
-                }            
+                player.bet *= 2;
             }else{
                 console.log("No more cards");
             }
-        }    
-    }
+        }
+    }   
 }
 

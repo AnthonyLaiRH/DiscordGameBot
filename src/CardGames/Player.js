@@ -7,6 +7,7 @@ module.exports = class Player{
         this.ready = false;
         this.role = role;
         this.bet = 2;
+        this.numberOfWins = 0;
     }
 
     insertCard(card){

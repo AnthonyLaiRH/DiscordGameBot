@@ -1,26 +1,34 @@
 module.export = class Blackjack{
     constructor(botRef){
         this.currentPlayerIndex = 0;
+        this.maxPlayers = 8;
         this.gameStarted = false;
-        this.dealingDeck = new Deck;
+        this.dealingDeck;
         this.readyPlayers = [];
         this.table = [new this.player(botRef.user, botRef.userID)];
     }
     start(botRef){
-        this.dealStartingHand();
+        this.dealer = new Player("the Dealer", "", null, "dealer");
+        this.table.push(this.dealer);
+        this.deck = new Deck(this.table);
         this.gameStarted = true;
         Deck.firstDeal();
-        playerTurns(botRef);
+        this.dealer = this.table.return(this.table.length-1);
     }
     receive(botRef){
         var command = botRef.message.toLowerCase()
-
         if(botRef.userID == this.table[this.currentPlayerIndex].userID){
-            if (command == "")
+            if (command == "stand"){
+                this.currentPlayerIndex++;
 
-            this.play(command, botRef);
+                if (this.currentPlayerIndex >= this.table.length){
+                    this.dealerTurn();
+                }
+            }else if (command == "hit" || command == "double"
+                    || command == "split"){
+                this.play(command, botRef);
+            }
         }
-
     }
 
     play(action,botRef){
@@ -46,10 +54,32 @@ module.export = class Blackjack{
             });
         }
 
+        if (this.currentPlayerIndex >= this.table.length){
+            this.dealerTurn();
+        }
+
     }
 
     dealerTurn(){
-
+        if(this.dealer.handValue() < 17){
+            Deck.dealCard(this.dealer.hand, this.dealer, "hit");
+        }else{
+            this.determinWinners();
+            this.currentPlayerIndex = 0;
+        }
     }
 
+    determinWinners(){
+        for(i = 0; i < this.table.length; i++){
+            if (this.table[i].handValue() > this.dealer.handValue()){
+                //Player wins
+                this.table[i].numberOfWins ++;
+            }else if (this.table[i].handValue() < this.dealer.handValue()){
+                //Dealer wins
+                this.dealer.numberOfWins++;
+            }else if (this.table[i].handValue() == this.dealer.handValue()){
+                //push
+            }
+        }
+    }
 }

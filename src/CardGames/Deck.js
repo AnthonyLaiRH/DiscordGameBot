@@ -1,6 +1,6 @@
 
-function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
+function shuffle() {
+    var currentIndex = cards.length, temporaryValue, randomIndex;
   
     // While there remain elements to shuffle...
     while (0 !== currentIndex) {
@@ -10,19 +10,17 @@ function shuffle(array) {
       currentIndex -= 1;
   
       // And swap it with the current element.
-      temporaryValue = array[currentIndex];
-      array[currentIndex] = array[randomIndex];
-      array[randomIndex] = temporaryValue;
+      temporaryValue = cards[currentIndex];
+      cards[currentIndex] = cards[randomIndex];
+      cards[randomIndex] = temporaryValue;
     }
-  
-    return array;
 }
 
 function firstDeal(){
     console.log("first deal");
     for(var i = 0; i < 2; i++){
         for(var j = 0; j < players.length; j++){
-            if(cards.length !== 0){
+            if(cards.length != 0){
                 players[j].insertCard(card);
                 cards.shift();
                 console.log("card inserted")
@@ -34,32 +32,35 @@ function firstDeal(){
 }
 
 function dealCard(hand, player, dealMode){
-    if(dealMode == "Hit"){
+    if(dealMode.toUpperCase() == "HIT"){
         console.log("hit")
-        if(cards.length !== 0){
+        if(cards.length != 0){
             if(player.hands.length != 0){
                 player.insertCard(hand, card);
                 cards.shift();
+                console.log("card inserted");
             }
-            console.log("card inserted")
+            
         }else{
             console.log("No more cards");
         }
     }
-    else if(dealMode == "Double"){
+    else if(dealMode.toUpperCase() == "DOUBLE"){
         console.log("double");
-        if(cards.length !== 0){
+        if(cards.length != 0){
             if(player.hands.length != 0){
                 player.insertCard(hand, card);
                 cards.shift();
+                console.log("card inserted");
             }
-            console.log("card inserted");
+            
             if(cards.length !== 0){
                 if(player.hands.length != 0){
                     player.insertCard(hand, card);
                     cards.shift();
+                    console.log("card inserted");
                 }
-                console.log("card inserted");
+                
             }else{
                 console.log("No more cards");
             }            

@@ -33,7 +33,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
         var args = message.substring(1).split(' ');
         var cmd = args[0].toLowerCase();
 
-        var botRef = new BotData(bot, user, userID, channelID, message, evt);
+        var botRef = new BotData(bot, user, userID, channelID, cmd, evt);
         args = args.splice(1);
 
         var flag = -1;
@@ -55,11 +55,13 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     var g = gt[0][y];
                     if (cmd == g[0]){
                         //Command is a game, initialise this game
+                        console.log(gameCards[1][1]);
                         gameChosen = gt[1].chooseGame(g, botRef);
+                        console.log("created")
                         channels.push([channelID, gameChosen]);
                         breaker = true;
                         var newPlayer = gameChosen.createPlayer(botRef);
-                        gameChosen.table.push[newPlayer];
+                        gameChosen.table.push(newPlayer);
                         break;
                     }
                 }
@@ -101,7 +103,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                             if (!inHere){
                                 if (currGame.table.length  < currGame.maxPlayers){
                                     var newPlayer = currGame.createPlayer(botRef);
-                                    currGame.table.push[newPlayer];
+                                    currGame.table.push(newPlayer);
                                     bot.sendMessage({
                                         to: channelID,
                                         message: "Welcome to Blackjack! Room" + channelID,
@@ -152,14 +154,15 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                                         to: channelID,
                                         message:((currGame.table.length-currGame.readyPlayers.length).toString() + " players must be ready to start.")
                                     });
-                                    break;
                                 }
                                 if (currGame.table.length==currGame.readyPlayers.length){
                                     bot.sendMessage({
                                         to: channelID,
                                         message: ("Starting game with " + currGame.readyPlayers.length.toString() + " players.")
                                     });
-                                    currGame.start();
+                                    console.log("hello");
+                                    currGame.start(botRef);
+                                    break;
                                 }
                             }
                         break;

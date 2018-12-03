@@ -1,4 +1,4 @@
-# LocalHackDay2018
+# LocalHackDay2018 - DiscordGameBot
 Local Hack Day 2018 - 
 To run:
   Create a new discord bot

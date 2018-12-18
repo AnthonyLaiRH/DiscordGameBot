@@ -60,8 +60,6 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         console.log("created")
                         channels.push([channelID, gameChosen]);
                         breaker = true;
-                        var newPlayer = gameChosen.createPlayer(botRef);
-                        gameChosen.table.push(newPlayer);
                         break;
                     }
                 }
@@ -102,8 +100,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                             }
                             if (!inHere){
                                 if (currGame.table.length  < currGame.maxPlayers){
-                                    var newPlayer = currGame.createPlayer(botRef);
-                                    currGame.table.push(newPlayer);
+                                    currGame.createPlayer(botRef);
                                     bot.sendMessage({
                                         to: channelID,
                                         message: "Welcome to Blackjack! Room" + channelID,
@@ -141,8 +138,8 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                         break;
                         case 'ready':
                             for( var i = 0; i < currGame.table.length; i++){
+                                console.log(currGame.table[i])
                                 if (currGame.table[i].userID == userID) {
-                                    currGame.table.splice(i, 1);
                                     var pos = currGame.readyPlayers.indexOf(userID);
                                     if (pos == -1){
                                         currGame.readyPlayers.push(userID);
@@ -150,6 +147,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                                     else{
                                         currGame.readyPlayers.splice(pos,1);
                                     }
+                                    console.log(currGame.readyPlayers);
                                     bot.sendMessage({
                                         to: channelID,
                                         message:((currGame.table.length-currGame.readyPlayers.length).toString() + " players must be ready to start.")

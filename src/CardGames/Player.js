@@ -24,13 +24,29 @@ module.exports = class Player{
     }
     
     clearHand(){
-        this.hands = [];
+        this.hands = [[],[]];
     }
 
-    handValue(){
+    blackjackHandValue(){
         var value = 0;
+        var aces = 0;
         for(var i = 0; i < this.hands[0].length; i++){
-            value = value + this.hands[0][i].value;
+            var cardName = this.hands[0][i].name;
+            console.log(cardName);
+            if (cardName=="A"){
+                aces++;
+                value+=11;
+            }
+            else if (cardName == "J" || cardName == "Q" || cardName == "K"){
+                value += 10;
+            }
+            else{
+                value += parseInt(cardName);
+            }
+        }
+        while (aces > 0 && value > 21){
+            aces -= 1;
+            value -= 10;
         }
         return value;
     }

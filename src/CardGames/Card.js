@@ -1,6 +1,5 @@
 module.exports = class Card{
-    constructor(value, name, suit){
-        this.value = value;
+    constructor(name, suit){
         this.name = name;
         this.suit = suit;
         this.shown = false;

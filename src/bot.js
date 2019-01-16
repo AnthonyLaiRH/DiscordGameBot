@@ -1,5 +1,6 @@
 var Discord = require('discord.io');
 var auth = require('./auth.json');
+var logger = require('winston')
 var BotData = require('./BotData.js')
 //Card game directory
 var cardDir = "./CardGames"
@@ -15,18 +16,25 @@ var gameTypes = [[gameCards, CardGames]]
 
 //Active channels
 var channels = []
-
+// Configure logger settings
+logger.remove(logger.transports.Console);
+logger.add(new logger.transports.Console, {
+    colorize: true
+});
+logger.level = 'debug';
 // Initialize Discord Bot
 var bot = new Discord.Client({
    token: auth.token,
    autorun: true
 });
 
-
 bot.on('ready', function (evt) {
-
+    logger.info('Connected');
+    logger.info('Logged in as: ');
+    logger.info(bot.username + ' - (' + bot.id + ')');
 });
-bot.on('message', function (user, userID, channelID, message, evt) {
+
+bot.on('message', async function (user, userID, channelID, message, evt) {
     // Our bot needs to know if it will execute a command
     // It will listen for messages that will start with `!`
     if (message.substring(0, 1) == '!') {
@@ -100,7 +108,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                             }
                             if (!inHere){
                                 if (currGame.table.length  < currGame.maxPlayers){
-                                    currGame.createPlayer(botRef);
+                                    currGame.createPlayer();
                                     bot.sendMessage({
                                         to: channelID,
                                         message: "Welcome to Blackjack! Room" + channelID,
@@ -150,7 +158,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                                     console.log(currGame.readyPlayers);
                                     bot.sendMessage({
                                         to: channelID,
-                                        message:((currGame.table.length-currGame.readyPlayers.length).toString() + " players must be ready to start.")
+                                        message: currGame.table.length-currGame.readyPlayers.length == 0 ? "All players are ready!" : ((currGame.table.length-currGame.readyPlayers.length).toString() + " players must be ready to start.")
                                     });
                                 }
                                 if (currGame.table.length==currGame.readyPlayers.length){
@@ -159,7 +167,7 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                                         message: ("Starting game with " + currGame.readyPlayers.length.toString() + " players.")
                                     });
                                     console.log("hello");
-                                    currGame.start(botRef);
+                                    currGame.start();
                                     break;
                                 }
                             }
@@ -167,7 +175,8 @@ bot.on('message', function (user, userID, channelID, message, evt) {
                     }
                 }
                 else{
-                    currGame.receive(botRef);
+                    currGame.botRef.message = cmd;
+                    currGame.receive();
                 }
             }
         }

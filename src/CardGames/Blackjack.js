@@ -51,9 +51,6 @@ module.exports = class Blackjack{
             to: this.botRef.channelID,
             message: msg,
         });
-
-        
-
     }
 
     receive(){
@@ -77,6 +74,7 @@ module.exports = class Blackjack{
         //player chooses to hit, and continues to hit until player decides to stand
         if (action == "hit"){
             player.hands[0].push(this.deck.dealCard());
+            console.log("hit: " + player.hands[0][player.hands[0].length-1].name + "\n");
             if (player.blackjackHandValue() > 21){
                 this.botRef.bot.sendMessage({
                     to: this.botRef.channelID,

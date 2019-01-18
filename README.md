@@ -17,4 +17,4 @@ To run:
   Type in !hit to get another card and !stand to stop
   Type !stop to reset back to needing to run !blackjack
   
-  
+NOTE: to get this bot to work in your server, make sure to change the token value in auth.json to your token before proceeding to add the bot.

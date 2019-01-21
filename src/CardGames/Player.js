@@ -8,6 +8,8 @@ module.exports = class Player{
         this.role = role;
         this.bet = 2;
         this.numberOfWins = 0;
+        this.isSplit = false;
+        this.isStand = false;
     }
 
     //insertCard(card){
@@ -18,21 +20,16 @@ module.exports = class Player{
         hand.push(card);
     }
 
-    split(){
-        this.hands.push(this.cards[0]);
-        this.hands.push(this.cards[1]);
-    }
-    
     clearHand(){
         this.hands = [[],[]];
     }
 
-    blackjackHandValue(){
+    blackjackHandValue(hand){
         var value = 0;
         var aces = 0;
-        for(var i = 0; i < this.hands[0].length; i++){
-            if(this.hands[0][i].shown){
-                var cardName = this.hands[0][i].name;
+        for(var i = 0; i < hand.length; i++){
+            if(hand[i].shown){
+                var cardName = hand[i].name;
                 console.log(cardName);
                 if (cardName=="A"){
                     aces++;

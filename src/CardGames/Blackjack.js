@@ -26,12 +26,14 @@ module.exports = class Blackjack{
         this.deck = new Deck();
         var msg = "";
         for(var i = 0; i < this.table.length-1; i++){
+            msg += this.table[i].user+ "'s hand: ";
             for (var j = 0; j<2; j++){
                 this.table[i].hands[0].push(this.deck.dealCard());
+                msg += this.table[i].hands[0][j].name + " ";
             }
-            msg += this.table[i].user+ "'s hand: " + this.table[i].blackjackHandValue() + "\n";
+            msg += "Total value is: " + this.table[i].blackjackHandValue(this.table[i].hands[0]) + "\n";
             //there is a chance that one player gets 21 first hand
-            if(this.table[i].blackjackHandValue() == 21 && this.table[i].role != "dealer"){
+            if(this.table[i].blackjackHandValue(this.table[i].hands[0]) == 21 && this.table[i].role != "dealer"){
                 this.botRef.bot.sendMessage({
                     to: this.botRef.channelID,
                     message: this.table[i].user + "wins",
@@ -45,7 +47,7 @@ module.exports = class Blackjack{
         this.table[this.table.length-1].hands[0].push(this.deck.dealCard());
         this.table[this.table.length-1].hands[0][0].flip(); //flip a card for dealer so only one is shown
         this.table[this.table.length-1].hands[0].push(this.deck.dealCard());
-        msg += "The Dealer's hand (shown cards only): " + this.table[this.table.length-1].blackjackHandValue() + "\n";
+        msg += "The Dealer's hand (shown cards only): " + this.table[this.table.length-1].blackjackHandValue(this.table[this.table.length-1].hands[0]) + "\n";
 
         this.botRef.bot.sendMessage({
             to: this.botRef.channelID,
@@ -69,13 +71,30 @@ module.exports = class Blackjack{
     }
 
     play(action){
-        var hand = this.table[this.currentPlayerIndex].hands[0];
         var player = this.table[this.currentPlayerIndex];
         //player chooses to hit, and continues to hit until player decides to stand
-        if (action == "hit"){
+        if(action === "hit"){
+            this.hit(player);
+        }
+    
+        //player stands, go to next player's turn or dealer's turn
+        else if(action === "stand"){
+            this.stand();
+        }
+
+        else if(action === "split"){
+            this.split(player);
+        }
+        
+        console.log(this.table.length);
+       
+    }
+
+    hit(player){
+        if(!player.isSplit){
             player.hands[0].push(this.deck.dealCard());
             console.log("hit: " + player.hands[0][player.hands[0].length-1].name + "\n");
-            if (player.blackjackHandValue() > 21){
+            if (player.blackjackHandValue(player.hands[0]) > 21){
                 this.botRef.bot.sendMessage({
                     to: this.botRef.channelID,
                     message: "Bust!",
@@ -90,15 +109,53 @@ module.exports = class Blackjack{
                 }
             }
             else{
+                var msg = "Your hand is: ";
+                for(var i = 0; i < player.hands[0].length; i++){
+                    msg += player.hands[0][i].name + " ";
+                }
+                msg += "Total value is: " + player.blackjackHandValue(player.hands[0]);
                 this.botRef.bot.sendMessage({
                     to: this.botRef.channelID,
-                    message: "Your hand has a total value of " + player.blackjackHandValue(),
+                    message: msg,
                 });
             }
+        }else{
+            if(!player.isStand){
+                player.hands[0].push(this.deck.dealCard());
+                var msg = "";
+                for(var i = 0; i < player.hands[0].length; i++){
+                    msg += player.hands[0][i].name + " ";
+                }
+                msg += "Total value is: " + player.blackjackHandValue(player.hands[0]);
+
+                this.botRef.bot.sendMessage({
+                    to: this.botRef.channelID,
+                    message: "Now dealing cards to your first hand: " + msg,
+                });
+               
+                
+            }else{
+                player.hands[1].push(this.deck.dealCard());
+                var msg = "";
+                for(var i = 0; i < player.hands[1].length; i++){
+                    msg += player.hands[1][i].name + " ";
+                }
+                msg += "Total value is: " + player.blackjackHandValue(player.hands[1]);
+
+                this.botRef.bot.sendMessage({
+                    to: this.botRef.channelID,
+                    message: "Now dealing cards to your second hand: " + msg,
+                });
+                
+            }
+
         }
-        
-        //player stands, go to next player's turn or dealer's turn
-        if(action == "stand"){
+    }
+    
+
+    stand(){
+        this.table[currentPlayerIndex].isStand = true;
+        if(!this.table[currentPlayerIndex].isSplit){
             this.currentPlayerIndex++;
             if (this.currentPlayerIndex >= this.table.length-1){
                 this.botRef.bot.sendMessage({
@@ -113,13 +170,21 @@ module.exports = class Blackjack{
                 });
             }
         }
-        
-        console.log(this.table.length);
-       
+    }
+
+    split(player){
+        var card = player.hands[0].pop();
+        player.hands[1].push(card);
+        player.isSplit = true;
+        this.botRef.bot.sendMessage({
+            to: this.botRef.channelID,
+            message: player.user + "\'s first hand value: " + player.blackjackHandValue(player.hands[0]) + "\n"
+            + player.user + "\'s second hand value: "  + player.blackjackHandValue(player.hands[1]),
+        });
     }
 
     dealerTurn(){
-        while(this.dealer.blackjackHandValue() < 17){
+        while(this.dealer.blackjackHandValue(this.dealer.hands[0]) < 17){
             this.dealer.hands[0].push(this.deck.dealCard());
         }
         this.determineWinners(this.botRef);
@@ -127,13 +192,13 @@ module.exports = class Blackjack{
     }
 
     determineWinners(){
-        var dealerHand = this.dealer.blackjackHandValue();
+        var dealerHand = this.dealer.blackjackHandValue(this.dealer.hands[0]);
         var winners = [];
         var winner = "";
         if (dealerHand > 21){
             this.botRef.bot.sendMessage({
                 to: this.botRef.channelID,
-                message: "Dealer busted!"
+                message: "Dealer busted!\n" + this.botRef.user + " wins."
             });
             this.reset();
         }
@@ -141,12 +206,12 @@ module.exports = class Blackjack{
             winners.push(this.dealer);
         }
         for(var i = 0; i < this.table.length-1; i++){
-            var playerHand = this.table[i].blackjackHandValue();
+            var playerHand = this.table[i].blackjackHandValue(this.table[i].hands[0]);
             if (playerHand <= 21){
-                if (playerHand > winners[0].blackjackHandValue()){
+                if (playerHand > winners[0].blackjackHandValue(winners[0].hands[0])){
                     winners = [this.table[i]];
                 }
-                else if (playerHand == winners[0].blackjackHandValue()){
+                else if (playerHand == winners[0].blackjackHandValue(winners[0].hands[0])){
                     winners.push(this.table[i]);
                 }
             }
@@ -161,7 +226,7 @@ module.exports = class Blackjack{
             winner = "Dealer wins.";
         }
         for(var i = 0; i < this.table.length; i++){
-            winner += " " + this.table[i].user + " has " + this.table[i].blackjackHandValue().toString() + "."
+            winner += " " + this.table[i].user + " has " + this.table[i].blackjackHandValue(this.table[i].hands[0]).toString() + "."
         }
 
         this.botRef.bot.sendMessage({
@@ -177,6 +242,8 @@ module.exports = class Blackjack{
             this.table[i].clearHand();
         }
         this.gameStarted = false;
+        this.isStand = false;
+        this.isSplit = false;
         this.readyPlayers = [];
         this.table.splice(this.table.length-1, 1);
     }

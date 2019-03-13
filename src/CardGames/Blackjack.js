@@ -15,7 +15,7 @@ module.exports = class Blackjack{
         this.table.push(new Player(this.botRef.user, this.botRef.userID, [], 'player'));
     }
 
-    start(){
+    async start(){
         this.gameStarted = true;
         if (this.dealer == null){
             this.dealer = new Player("The Dealer", "", [], "dealer");
@@ -34,10 +34,7 @@ module.exports = class Blackjack{
             msg += "Total value is: " + this.table[i].blackjackHandValue(this.table[i].hands[0]) + "\n";
             //there is a chance that one player gets 21 first hand
             if(this.table[i].blackjackHandValue(this.table[i].hands[0]) == 21 && this.table[i].role != "dealer"){
-                this.botRef.bot.sendMessage({
-                    to: this.botRef.channelID,
-                    message: this.table[i].user + "wins",
-                })
+                this.botRef.channelID.send(this.table[i].user + " wins");
                 this.reset();
             }
 
@@ -49,10 +46,7 @@ module.exports = class Blackjack{
         this.table[this.table.length-1].hands[0].push(this.deck.dealCard());
         msg += "The Dealer's hand (shown cards only): " + this.table[this.table.length-1].blackjackHandValue(this.table[this.table.length-1].hands[0]) + "\n";
 
-        this.botRef.bot.sendMessage({
-            to: this.botRef.channelID,
-            message: msg,
-        });
+        this.botRef.channelID.send(msg);
     }
 
     receive(){
@@ -95,16 +89,10 @@ module.exports = class Blackjack{
             player.hands[0].push(this.deck.dealCard());
             console.log("hit: " + player.hands[0][player.hands[0].length-1].name + "\n");
             if (player.blackjackHandValue(player.hands[0]) > 21){
-                this.botRef.bot.sendMessage({
-                    to: this.botRef.channelID,
-                    message: "Bust!",
-                });
+                this.botRef.channelID.send("Bust!");
 
                 if(this.table.length == 2){
-                    this.botRef.bot.sendMessage({
-                    to: this.botRef.channelID,
-                    message: "Dealer wins",
-                });
+                    this.botRef.channelID.send("Dealer wins");
                 this.reset();
                 }
             }
@@ -114,10 +102,7 @@ module.exports = class Blackjack{
                     msg += player.hands[0][i].name + " ";
                 }
                 msg += "Total value is: " + player.blackjackHandValue(player.hands[0]);
-                this.botRef.bot.sendMessage({
-                    to: this.botRef.channelID,
-                    message: msg,
-                });
+                this.botRef.channelID.send(msg);
             }
         }else{
             if(!player.isStand){
@@ -128,10 +113,7 @@ module.exports = class Blackjack{
                 }
                 msg += "Total value is: " + player.blackjackHandValue(player.hands[0]);
 
-                this.botRef.bot.sendMessage({
-                    to: this.botRef.channelID,
-                    message: "Now dealing cards to your first hand: " + msg,
-                });
+                this.botRef.channelID.send("Now dealing cards to your first hand: " + msg);
                
                 
             }else{
@@ -142,10 +124,7 @@ module.exports = class Blackjack{
                 }
                 msg += "Total value is: " + player.blackjackHandValue(player.hands[1]);
 
-                this.botRef.bot.sendMessage({
-                    to: this.botRef.channelID,
-                    message: "Now dealing cards to your second hand: " + msg,
-                });
+                this.botRef.channelID.send("Now dealing cards to your second hand: " + msg);
                 
             }
 
@@ -158,16 +137,10 @@ module.exports = class Blackjack{
         if(!this.table[currentPlayerIndex].isSplit){
             this.currentPlayerIndex++;
             if (this.currentPlayerIndex >= this.table.length-1){
-                this.botRef.bot.sendMessage({
-                    to: this.botRef.channelID,
-                    message: "Dealer\'s turn",
-                });
+                this.botRef.channelID.send("Dealer\'s turn",);
                 this.dealerTurn();
             }else{
-                this.botRef.bot.sendMessage({
-                    to: this.botRef.channelID,
-                    message: this.table[currentPlayerIndex].user + "\'s turn",
-                });
+                this.botRef.channelID.send( this.table[currentPlayerIndex].user + "\'s turn");
             }
         }
     }
@@ -176,11 +149,8 @@ module.exports = class Blackjack{
         var card = player.hands[0].pop();
         player.hands[1].push(card);
         player.isSplit = true;
-        this.botRef.bot.sendMessage({
-            to: this.botRef.channelID,
-            message: player.user + "\'s first hand value: " + player.blackjackHandValue(player.hands[0]) + "\n"
-            + player.user + "\'s second hand value: "  + player.blackjackHandValue(player.hands[1]),
-        });
+        this.botRef.channelID.send(player.user + "\'s first hand value: " + player.blackjackHandValue(player.hands[0]) + "\n"
+            + player.user + "\'s second hand value: "  + player.blackjackHandValue(player.hands[1]));
     }
 
     dealerTurn(){
@@ -196,10 +166,7 @@ module.exports = class Blackjack{
         var winners = [];
         var winner = "";
         if (dealerHand > 21){
-            this.botRef.bot.sendMessage({
-                to: this.botRef.channelID,
-                message: "Dealer busted!\n" + this.botRef.user + " wins."
-            });
+            this.botRef.channelID.send("Dealer busted!\n" + this.botRef.user + " wins.");
             this.reset();
         }
         else {
@@ -219,9 +186,6 @@ module.exports = class Blackjack{
         if (winners.length > 1){
             winner = "Draw.";
         }
-        else if (winners[0].role == 'player'){
-            winner = winners[0].user + " wins.";
-        }
         else {
             winner = "Dealer wins.";
         }
@@ -229,10 +193,7 @@ module.exports = class Blackjack{
             winner += " " + this.table[i].user + " has " + this.table[i].blackjackHandValue(this.table[i].hands[0]).toString() + "."
         }
 
-        this.botRef.bot.sendMessage({
-            to: this.botRef.channelID,
-            message: winner,
-        });
+        this.botRef.channelID.send(winner,);
 
         this.reset();
     }

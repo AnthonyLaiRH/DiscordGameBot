@@ -7,10 +7,6 @@
         "type": "node",
         "request": "launch",
         "name": "Launch Program",
-        "program": "c:\\dev\\media-services-turn\\turn-healthcheck\\test.js",
-        "env": {
-            "AWS_REGION": "us-east-1",
-            "RUN_LOCAL": "true",
-        }
+        "program": "${workspaceFolder}\\src\\index.js"
     }]
 }

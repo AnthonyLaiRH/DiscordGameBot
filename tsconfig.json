@@ -1,0 +1,34 @@
+{
+    "compileOnSave": true,
+    "compilerOptions": {
+        "target": "es2017",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "sourceMap": true,
+        "outDir": "build",
+        "pretty": true,
+        "removeComments": true,
+        "noEmitOnError": true,
+        "allowJs": true,
+        "allowUnreachableCode": false,
+        "allowUnusedLabels": false,
+        "allowSyntheticDefaultImports": false,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": false,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noImplicitUseStrict": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": false,
+        "strictNullChecks": false,
+        "suppressExcessPropertyErrors": false,
+        "suppressImplicitAnyIndexErrors": false
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+    ]
+}

@@ -4,12 +4,25 @@
   "description": "A discord bot that plays blackjack",
   "main": "src/index.js",
   "dependencies": {
+    "@types/events": "^3.0.0",
+    "bufferutil": "^4.0.1",
+    "child_process": "^1.0.2",
+    "discord": "^0.8.2",
     "discord.io": "^2.5.3",
+    "discord.js": "^11.4.2",
+    "events": "^3.0.0",
+    "node-fetch": "^2.3.0",
+    "stream": "0.0.2",
+    "typescript": "^3.3.3333",
     "winston": "^3.1.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "eslint": "^5.15.1"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "tsc --project . --watch",
+    "launch": "node build/src/index.js"
   },
   "repository": {
     "type": "git",

@@ -1,15 +1,22 @@
 import { Player } from './Player';
 import { Deck } from './Deck';
-import { Card } from './Card';
 import { BotData } from '../BotData';
 
 export class Blackjack {
+    //@ts-ignore
     private _maxPlayers: number;
+    //@ts-ignore
     private _gameStarted: boolean;
+    //@ts-ignore
     private _readyPlayers: Player[];
     private _table: Player[];
     private _dealer: Player;
     private _botRef: BotData;
+
+    //@ts-ignore
+    private _isSplit: boolean;
+    //@ts-ignore
+    private _isStand: boolean;
 
     private _currentPlayerIndex: number;
     private _deck: Deck;
@@ -125,7 +132,7 @@ export class Blackjack {
                 }
                 msg += "Total value is: " + player.blackjackHandValue(player.hands[0]);
 
-                this.botRef.channelID.send("Now dealing cards to your first hand: " + msg);
+                this._botRef.channelID.send("Now dealing cards to your first hand: " + msg);
 
 
             } else {
@@ -145,14 +152,14 @@ export class Blackjack {
 
 
     stand() {
-        this.table[currentPlayerIndex].isStand = true;
-        if (!this.table[currentPlayerIndex].isSplit) {
-            this.currentPlayerIndex++;
-            if (this.currentPlayerIndex >= this.table.length - 1) {
-                this.botRef.channelID.send("Dealer\'s turn");
+        this._table[this._currentPlayerIndex].isStand = true;
+        if (!this._table[this._currentPlayerIndex].isSplit) {
+            this._currentPlayerIndex++;
+            if (this._currentPlayerIndex >= this._table.length - 1) {
+                this._botRef.channelID.send("Dealer\'s turn");
                 this.dealerTurn();
             } else {
-                this.botRef.channelID.send(this.table[currentPlayerIndex].user + "\'s turn");
+                this._botRef.channelID.send(this._table[this._currentPlayerIndex].user + "\'s turn");
             }
         }
     }
@@ -161,37 +168,37 @@ export class Blackjack {
         var card = player.hands[0].pop();
         player.hands[1].push(card);
         player.isSplit = true;
-        this.botRef.channelID.send(player.user + "\'s first hand value: " + player.blackjackHandValue(player.hands[0]) + "\n"
+        this._botRef.channelID.send(player.user + "\'s first hand value: " + player.blackjackHandValue(player.hands[0]) + "\n"
             + player.user + "\'s second hand value: " + player.blackjackHandValue(player.hands[1]));
     }
 
     dealerTurn() {
-        while (this.dealer.blackjackHandValue(this.dealer.hands[0]) < 17) {
-            this.dealer.hands[0].push(this.deck.dealCard());
+        while (this._dealer.blackjackHandValue(this._dealer.hands[0]) < 17) {
+            this._dealer.hands[0].push(this._deck.dealCard());
         }
-        this.determineWinners(this.botRef);
-        this.currentPlayerIndex = 0;
+        this.determineWinners();
+        this._currentPlayerIndex = 0;
     }
 
     determineWinners() {
-        var dealerHand = this.dealer.blackjackHandValue(this.dealer.hands[0]);
+        var dealerHand = this._dealer.blackjackHandValue(this._dealer.hands[0]);
         var winners = [];
         var winner = "";
         if (dealerHand > 21) {
-            this.botRef.channelID.send("Dealer busted!\n" + this.botRef.user + " wins.");
+            this._botRef.channelID.send("Dealer busted!\n" + this._botRef.user + " wins.");
             this.reset();
         }
         else {
-            winners.push(this.dealer);
+            winners.push(this._dealer);
         }
-        for (var i = 0; i < this.table.length - 1; i++) {
-            var playerHand = this.table[i].blackjackHandValue(this.table[i].hands[0]);
+        for (var i = 0; i < this._table.length - 1; i++) {
+            var playerHand = this._table[i].blackjackHandValue(this._table[i].hands[0]);
             if (playerHand <= 21) {
                 if (playerHand > winners[0].blackjackHandValue(winners[0].hands[0])) {
-                    winners = [this.table[i]];
+                    winners = [this._table[i]];
                 }
                 else if (playerHand == winners[0].blackjackHandValue(winners[0].hands[0])) {
-                    winners.push(this.table[i]);
+                    winners.push(this._table[i]);
                 }
             }
         }
@@ -201,23 +208,23 @@ export class Blackjack {
         else {
             winner = "Dealer wins.";
         }
-        for (var i = 0; i < this.table.length; i++) {
-            winner += " " + this.table[i].user + " has " + this.table[i].blackjackHandValue(this.table[i].hands[0]).toString() + "."
+        for (var i = 0; i < this._table.length; i++) {
+            winner += " " + this._table[i].user + " has " + this._table[i].blackjackHandValue(this._table[i].hands[0]).toString() + "."
         }
 
-        this.botRef.channelID.send(winner);
+        this._botRef.channelID.send(winner);
 
         this.reset();
     }
 
     reset() {
-        for (var i = 0; i < this.table.length; i++) {
-            this.table[i].clearHand();
+        for (var i = 0; i < this._table.length; i++) {
+            this._table[i].clearHand();
         }
-        this.gameStarted = false;
-        this.isStand = false;
-        this.isSplit = false;
-        this.readyPlayers = [];
-        this.table.splice(this.table.length - 1, 1);
+        this._gameStarted = false;
+        this._isStand = false;
+        this._isSplit = false;
+        this._readyPlayers = [];
+        this._table.splice(this._table.length - 1, 1);
     }
 }

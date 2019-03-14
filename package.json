@@ -5,6 +5,7 @@
   "main": "src/index.js",
   "dependencies": {
     "@types/events": "^3.0.0",
+    "@types/node": "^11.11.3",
     "bufferutil": "^4.0.1",
     "child_process": "^1.0.2",
     "discord": "^0.8.2",

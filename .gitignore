@@ -1,4 +1,4 @@
 node_modules
 build
-src/auth.json
+auth.json
 .eslintrc.json

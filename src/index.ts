@@ -1,7 +1,7 @@
 import { Client } from 'discord.js';
 let auth = require('./auth.json');
 const logger = require('winston');
-import { BotData } from './BotData.js';
+import { BotData } from './BotData';
 //Card game directory
 var cardDir = "./CardGames";
 var CardGames = require(cardDir);
@@ -53,7 +53,7 @@ bot.on('message', async message => {
             var userID = message.member.user.id;
             var channelID = message.channel;
 
-            var botRef = {
+            var botRef: BotData = {
                 bot: bot,
                 user: user,
                 userID: userID,
@@ -97,10 +97,7 @@ bot.on('message', async message => {
                 }
             } else {
                 if (cmd == 'stop') {
-                    await bot.sendMessage({
-                        to: channelID,
-                        message: ('Stopping game...')
-                    });
+                    await message.channel.send('Stopping game...');
                     channels.splice(flag, 1);
                 } else {
                     var currGame = channels[flag][1];
@@ -111,25 +108,16 @@ bot.on('message', async message => {
                                 for (var i = 0; i < currGame.table.length; i++) {
                                     if (currGame.table[i].userID == userID) {
                                         inHere = true;
-                                        await bot.sendMessage({
-                                            to: channelID,
-                                            message: "Already in the room",
-                                        });
+                                        await message.channel.send("Already in the room");
                                         break;
                                     }
                                 }
                                 if (!inHere) {
                                     if (currGame.table.length < currGame.maxPlayers) {
                                         currGame.createPlayer();
-                                        await bot.sendMessage({
-                                            to: channelID,
-                                            message: "Welcome to Blackjack! Room" + channelID,
-                                        });
+                                        await message.channel.send("Welcome to Blackjack! Room" + channelID);
                                     } else {
-                                        await bot.sendMessage({
-                                            to: channelID,
-                                            message: "Sorry. Table Currently Full.",
-                                        });
+                                        await message.channel.send("Sorry. Table Currently Full.");
                                     }
                                 }
                                 break;
@@ -137,10 +125,7 @@ bot.on('message', async message => {
                                 for (var i = 0; i < currGame.table.length; i++) {
                                     if (currGame.table[i].userID == userID) {
                                         if (currGame.table.length == 1) {
-                                            await bot.sendMessage({
-                                                to: channelID,
-                                                message: ('Stopping game...')
-                                            });
+                                            await message.channel.send('Stopping game...');
                                             channels.splice(flag, 1);
                                         }
                                         currGame.table.splice(i, 1);
@@ -148,10 +133,7 @@ bot.on('message', async message => {
                                         if (pos != -1) {
                                             currGame.readyPlayers.splice(pos, 1);
                                         }
-                                        await bot.sendMessage({
-                                            to: channelID,
-                                            message: "Goodbye.",
-                                        });
+                                        await channelID.send("Goodbye.");
                                         break;
                                     }
                                 }
@@ -167,10 +149,10 @@ bot.on('message', async message => {
                                             currGame.readyPlayers.splice(pos, 1);
                                         }
                                         console.log(currGame.readyPlayers);
-                                        channelID.send(currGame.table.length - currGame.readyPlayers.length == 0 ? "All players are ready!" : ((currGame.table.length - currGame.readyPlayers.length).toString() + " players must be ready to start."));
+                                        await channelID.send(currGame.table.length - currGame.readyPlayers.length == 0 ? "All players are ready!" : ((currGame.table.length - currGame.readyPlayers.length).toString() + " players must be ready to start."));
                                     }
                                     if (currGame.table.length == currGame.readyPlayers.length) {
-                                        channelID.send("Starting game with " + currGame.readyPlayers.length.toString() + " players.");
+                                        await channelID.send("Starting game with " + currGame.readyPlayers.length.toString() + " players.");
                                         console.log("hello");
                                         currGame.start();
                                         break;
